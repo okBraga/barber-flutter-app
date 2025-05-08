@@ -1,0 +1,2 @@
+C:/Users/fillb/OneDrive/Documentos/projetos/flutter/barber_app/android/app/.cxx/Debug/501jq203/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/fillb/OneDrive/Documentos/projetos/flutter/barber_app/android/app/.cxx/Debug/501jq203/x86_64/CMakeFiles/rebuild_cache.dir
