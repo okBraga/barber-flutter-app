@@ -13,7 +13,7 @@ import 'package:go_router/go_router.dart';
 
 GoRouter buildRouter() {
   return GoRouter(
-    initialLocation: AppRoutes.serviceType,
+    initialLocation: AppRoutes.signUp,
     routes: [
       GoRoute(
         path: AppRoutes.login,
