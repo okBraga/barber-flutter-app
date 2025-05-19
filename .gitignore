@@ -44,3 +44,11 @@ coverage/
 # Obfuscation & symbol files
 app.*.map.json
 app.*.symbols
+
+# Android native build artifacts
+**/android/**/cmake-build-debug/
+**/android/**/intermediates/
+**/android/**/ninja/
+**/android/**/gradle/
+**/android/**/captures/
+**/android/**/obj/
