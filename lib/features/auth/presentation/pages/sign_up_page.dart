@@ -1,8 +1,9 @@
 import 'package:barber_app/core/components/buttons/primary_button.dart';
 import 'package:barber_app/core/navigation/app_routes.dart';
-import 'package:barber_app/features/auth/data/services/auth_service.dart';
+import 'package:barber_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:barber_app/features/auth/presentation/widgets/password_visibility_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -44,160 +45,181 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Criar conta',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.black),
-        ),
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 24),
-                        TextFormField(
-                          controller: _emailController,
-                          validator: (email) {
-                            if (_emailController.text.isEmpty || !_emailController.text.contains('@')) {
-                              return 'Digite um e-mail válido';
-                            }
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'E-mail',
-                            labelStyle: TextStyle(color: Colors.grey[600]),
-                            focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 24),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: _isPasswordVisible,
-                          validator: (password) {
-                            if (_passwordController.text.length < 6) {
-                              return 'A senha deve ter pelo menos 6 caracteres';
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Senha',
-                            labelStyle: TextStyle(color: Colors.grey[600]),
-                            focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black),
-                            ),
-                            suffixIcon: PasswordVisibilityIcon(
-                              isVisible: _isPasswordVisible,
-                              onPressed: () {
-                                setState(() => _isPasswordVisible = !_isPasswordVisible);
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        TextFormField(
-                          controller: _confirmPasswordController,
-                          obscureText: _isPasswordVisible,
-                          validator: (password) {
-                            if (_confirmPasswordController.text != _passwordController.text) {
-                              return 'As senhas não coincidem';
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Confirmar senha',
-                            labelStyle: TextStyle(color: Colors.grey[600]),
-                            focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black),
-                            ),
-                            suffixIcon: PasswordVisibilityIcon(
-                              isVisible: _isPasswordVisible,
-                              onPressed: () {
-                                setState(() => _isPasswordVisible = !_isPasswordVisible);
-                              },
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 24),
-                        Spacer(),
-                        SizedBox(
-                          width: double.infinity,
-                          child: PrimaryButton(
-                            onPressed: () async {
-                              FocusScope.of(context).unfocus();
-                              if (_formKey.currentState!.validate()) {
-                                final error = await AuthService().signUp(
-                                  _emailController.text,
-                                  _passwordController.text,
-                                );
-                                if (error != null) {
-                                  showSnackBar(error);
-                                } else {
-                                  showSnackBar('Conta criada com sucesso!');
-                                  GoRouter.of(context).go(AppRoutes.login);
-                                }
-                              }
-                            },
-                            isPrimary: true,
-                            child: const Text(
-                              'Cadastrar',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        Center(
-                          child: TextButton(
-                            onPressed: () {
-                              GoRouter.of(context).go(AppRoutes.login);
-                            },
-                            child: RichText(
-                              text: TextSpan(
-                                text: 'Já tem uma conta? ',
-                                style: TextStyle(color: Colors.grey[600]),
-                                children: const [
-                                  TextSpan(
-                                    text: 'Entrar',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthFailure) {
+          showSnackBar(state.message);
+        } else if (state is AuthSuccess) {
+          showSnackBar('Conta criada com sucesso!');
+          if (mounted) GoRouter.of(context).pop();
+        }
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                'Criar conta',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
                 ),
               ),
-            );
-          },
+              centerTitle: true,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              iconTheme: const IconThemeData(color: Colors.black),
+            ),
+            body: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 24.0),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 24),
+                            TextFormField(
+                              controller: _emailController,
+                              validator: (email) {
+                                if (_emailController.text.isEmpty || !_emailController.text.contains('@')) {
+                                  return 'Digite um e-mail válido';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'E-mail',
+                                labelStyle: TextStyle(color: Colors.grey[600]),
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 24),
+                            TextFormField(
+                              controller: _passwordController,
+                              obscureText: _isPasswordVisible,
+                              validator: (password) {
+                                if (_passwordController.text.length < 6) {
+                                  return 'A senha deve ter pelo menos 6 caracteres';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Senha',
+                                labelStyle: TextStyle(color: Colors.grey[600]),
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
+                                suffixIcon: PasswordVisibilityIcon(
+                                  isVisible: _isPasswordVisible,
+                                  onPressed: () {
+                                    setState(() => _isPasswordVisible = !_isPasswordVisible);
+                                  },
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            TextFormField(
+                              controller: _confirmPasswordController,
+                              obscureText: _isPasswordVisible,
+                              validator: (password) {
+                                if (_confirmPasswordController.text != _passwordController.text) {
+                                  return 'As senhas não coincidem';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Confirmar senha',
+                                labelStyle: TextStyle(color: Colors.grey[600]),
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
+                                suffixIcon: PasswordVisibilityIcon(
+                                  isVisible: _isPasswordVisible,
+                                  onPressed: () {
+                                    setState(() => _isPasswordVisible = !_isPasswordVisible);
+                                  },
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 24),
+                            Spacer(),
+                            SizedBox(
+                              width: double.infinity,
+                              child: BlocBuilder<AuthBloc, AuthState>(
+                                builder: (context, state) {
+                                  return PrimaryButton(
+                                    onPressed: state is AuthLoading
+                                        ? null
+                                        : () async {
+                                            FocusScope.of(context).unfocus();
+                                            if (_formKey.currentState!.validate()) {
+                                              context.read<AuthBloc>().add(
+                                                    AuthSignUpEvent(
+                                                      _emailController.text,
+                                                      _passwordController.text,
+                                                    ),
+                                                  );
+                                            }
+                                          },
+                                    isPrimary: true,
+                                    child: state is AuthLoading
+                                        ? SizedBox(
+                                            height: 22,
+                                            width: 22,
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : const Text(
+                                            'Cadastrar',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Center(
+                              child: TextButton(
+                                onPressed: () {
+                                  GoRouter.of(context).push(AppRoutes.login);
+                                },
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: 'Já tem uma conta? ',
+                                    style: TextStyle(color: Colors.grey[600]),
+                                    children: const [
+                                      TextSpan(
+                                        text: 'Entrar',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       ),
     );

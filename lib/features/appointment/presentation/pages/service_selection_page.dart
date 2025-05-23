@@ -19,37 +19,39 @@ class ServiceSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Selecione os serviços',
-          style: TextStyle(
-            color: Colors.black87,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            'Selecione os serviços',
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
-      body: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        itemCount: services.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          final service = services[index];
-          return ServiceCard(
-            title: service['service']!,
-            price: service['price']!,
-            duration: service['duration']!,
-          );
-        },
-      ),
-      bottomNavigationBar: BottomButtonBar(
-        buttonText: 'Continuar',
-        onPressed: () => GoRouter.of(context).push(AppRoutes.booking),
+        body: ListView.separated(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          itemCount: services.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            final service = services[index];
+            return ServiceCard(
+              title: service['service']!,
+              price: service['price']!,
+              duration: service['duration']!,
+            );
+          },
+        ),
+        bottomNavigationBar: BottomButtonBar(
+          buttonText: 'Continuar',
+          onPressed: () => GoRouter.of(context).push(AppRoutes.booking),
+        ),
       ),
     );
   }

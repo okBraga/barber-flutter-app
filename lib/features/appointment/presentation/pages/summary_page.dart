@@ -3,6 +3,7 @@ import 'package:barber_app/core/components/buttons/primary_button.dart';
 import 'package:barber_app/core/navigation/app_routes.dart';
 import 'package:barber_app/features/appointment/presentation/widgets/info_card.dart';
 import 'package:barber_app/features/appointment/presentation/widgets/label_text_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -27,111 +28,113 @@ class SummaryPage extends StatelessWidget {
     final dateFormat = DateFormat('EEEE, dd MMMM y', 'pt_BR');
     final formattedDate = dateFormat.format(selectedDate);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          "Resumo do Agendamento",
-          style: TextStyle(
-            color: Colors.black87,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text(
+            "Resumo do Agendamento",
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: ListView(
-          children: [
-            const SizedBox(height: 24),
-            LabelTextButton(
-              title: 'Profissional',
-              onTap: () => _showProfessionalOptions(context),
-            ),
-            InfoCard(
-              title: selectedProfessional,
-              subtitle: 'Especialista em cortes masculinos',
-              child: Icon(
-                Icons.person,
-                size: 24,
-                color: Colors.black87,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: ListView(
+            children: [
+              const SizedBox(height: 24),
+              LabelTextButton(
+                title: 'Profissional',
+                onTap: () => _showProfessionalOptions(context),
               ),
-            ),
-            const SizedBox(height: 24),
-            LabelTextButton(
-              title: 'Data e Horário',
-              //TODO implementar edição de data e horário
-              onTap: () {},
-            ),
-            InfoCard(
-              title: formattedDate,
-              subtitle: 'Horário: $selectedTime',
-              child: Icon(
-                Icons.calendar_today,
-                size: 24,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 24),
-            LabelTextButton(
-              title: 'Serviços Selecionados',
-              //TODO implementar edição de serviços
-              onTap: () {},
-            ),
-            Card(
-              color: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Column(
-                  children: [
-                    ...selectedServices.map((service) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: _buildServiceItem(
-                            name: service['name'],
-                            price: service['price'],
-                          ),
-                        )),
-                    const Divider(height: 24, thickness: 1),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Total:',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          'R\$ ${totalPrice.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              InfoCard(
+                title: selectedProfessional,
+                subtitle: 'Especialista em cortes masculinos',
+                child: Icon(
+                  Icons.person,
+                  size: 24,
+                  color: Colors.black87,
                 ),
               ),
-            ),
-            const SizedBox(height: 32),
-          ],
+              const SizedBox(height: 24),
+              LabelTextButton(
+                title: 'Data e Horário',
+                //TODO implementar edição de data e horário
+                onTap: () {},
+              ),
+              InfoCard(
+                title: formattedDate,
+                subtitle: 'Horário: $selectedTime',
+                child: Icon(
+                  Icons.calendar_today,
+                  size: 24,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 24),
+              LabelTextButton(
+                title: 'Serviços Selecionados',
+                //TODO implementar edição de serviços
+                onTap: () {},
+              ),
+              Card(
+                color: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    children: [
+                      ...selectedServices.map((service) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: _buildServiceItem(
+                              name: service['name'],
+                              price: service['price'],
+                            ),
+                          )),
+                      const Divider(height: 24, thickness: 1),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Total:',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            'R\$ ${totalPrice.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: BottomButtonBar(
-        buttonText: 'Confirmar Agendamento',
-        onPressed: () => _confirmAppointment(context),
+        bottomNavigationBar: BottomButtonBar(
+          buttonText: 'Confirmar Agendamento',
+          onPressed: () => _confirmAppointment(context),
+        ),
       ),
     );
   }
 
   void _confirmAppointment(BuildContext context) {
-    const isLoggedIn = false;
+    final isLoggedIn = FirebaseAuth.instance.currentUser != null;
 
     if (!isLoggedIn) {
       _showAuthRequiredDialog(context);
@@ -183,7 +186,7 @@ class SummaryPage extends StatelessWidget {
                 child: PrimaryButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    GoRouter.of(context).go(AppRoutes.signUp);
+                    GoRouter.of(context).push(AppRoutes.signUp);
                   },
                   isPrimary: true,
                   child: const Text(
@@ -279,7 +282,12 @@ class SummaryPage extends StatelessWidget {
       ),
       builder: (context) {
         return Container(
-          color: Colors.white,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(12),
+            ),
+            color: Colors.white,
+          ),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -295,12 +303,22 @@ class SummaryPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _buildProfessionalOption('Fred', true),
-                _buildProfessionalOption('Carlos', false),
+                _buildProfessionalOption('Filipe', false),
                 const SizedBox(height: 24),
-                PrimaryButton(
-                  onPressed: () => Navigator.pop(context),
-                  isPrimary: true,
-                  child: const Text('Confirmar'),
+                Center(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: PrimaryButton(
+                      onPressed: () => Navigator.pop(context),
+                      isPrimary: true,
+                      child: const Text(
+                        'Confirmar',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

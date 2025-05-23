@@ -1,14 +1,44 @@
+import 'package:barber_app/core/components/bottom_navigation_bar/custom_navigation_bar.dart';
+import 'package:barber_app/core/navigation/app_routes.dart';
 import 'package:barber_app/features/auth/data/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:barber_app/core/components/buttons/primary_button.dart';
+import 'package:go_router/go_router.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final int _selectedIndex = 2;
+
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+
+    switch (index) {
+      case 0:
+        GoRouter.of(context).go(AppRoutes.serviceType);
+        break;
+      case 1:
+        GoRouter.of(context).push(AppRoutes.appointments);
+        break;
+      case 2:
+        GoRouter.of(context).push(AppRoutes.profile);
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      bottomNavigationBar: CustomNavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationTapped: _onItemTapped,
+      ),
       appBar: AppBar(
         title: const Text(
           'Meu Perfil',
@@ -139,6 +169,7 @@ class ProfilePage extends StatelessWidget {
             PrimaryButton(
               onPressed: () async {
                 await AuthService().signOut();
+                GoRouter.of(context).go(AppRoutes.serviceType);
               },
               isPrimary: true,
               child: const Text(
@@ -150,6 +181,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 24),
           ],
         ),
       ),

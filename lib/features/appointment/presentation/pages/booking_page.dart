@@ -45,103 +45,105 @@ class _BookingPageState extends State<BookingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Data e horário',
-          style: TextStyle(
-            color: Colors.black87,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${months[DateTime.now().month - 1]} ${DateTime.now().year}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 100,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: availableDates.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 12),
-                    itemBuilder: (context, index) {
-                      final date = availableDates[index];
-                      final isSelected = selectedDate?.day == date.day;
-                      final dayName = _getDayName(date.weekday);
-                      return DateChip(
-                        dayNumber: date.day.toString(),
-                        dayName: dayName,
-                        isSelected: isSelected,
-                        onTap: () => setState(() => selectedDate = date),
-                      );
-                    },
-                  ),
-                ),
-              ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Data e horário',
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 24, bottom: 16),
-                    child: Text(
-                      'Horários disponíveis',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
+                  Text(
+                    '${months[DateTime.now().month - 1]} ${DateTime.now().year}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
                     ),
                   ),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        GridView.count(
-                          crossAxisCount: 3,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 2.5,
-                          children: availableTimes.map((time) {
-                            final isSelected = selectedTime == time;
-                            return TimeChip(
-                              time: time,
-                              isSelected: isSelected,
-                              onTap: () => setState(() => selectedTime = time),
-                            );
-                          }).toList(),
-                        ),
-                      ],
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 100,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: availableDates.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      itemBuilder: (context, index) {
+                        final date = availableDates[index];
+                        final isSelected = selectedDate?.day == date.day;
+                        final dayName = _getDayName(date.weekday);
+                        return DateChip(
+                          dayNumber: date.day.toString(),
+                          dayName: dayName,
+                          isSelected: isSelected,
+                          onTap: () => setState(() => selectedDate = date),
+                        );
+                      },
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomButtonBar(
-        buttonText: 'Continuar',
-        onPressed: () => GoRouter.of(context).push(AppRoutes.summary),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 24, bottom: 16),
+                      child: Text(
+                        'Horários disponíveis',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          GridView.count(
+                            crossAxisCount: 3,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 2.5,
+                            children: availableTimes.map((time) {
+                              final isSelected = selectedTime == time;
+                              return TimeChip(
+                                time: time,
+                                isSelected: isSelected,
+                                onTap: () => setState(() => selectedTime = time),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: BottomButtonBar(
+          buttonText: 'Continuar',
+          onPressed: () => GoRouter.of(context).push(AppRoutes.summary),
+        ),
       ),
     );
   }

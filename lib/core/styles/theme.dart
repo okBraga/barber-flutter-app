@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 ThemeData buildTheme() {
   return ThemeData(
+      useMaterial3: true,
       scaffoldBackgroundColor: Colors.grey[50],
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white,
@@ -37,6 +38,9 @@ ThemeData buildTheme() {
           color: Colors.grey,
           size: 24,
         ),
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: Colors.black,
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: Colors.white,

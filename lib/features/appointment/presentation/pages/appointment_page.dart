@@ -13,7 +13,7 @@ class AppointmentsPage extends StatefulWidget {
 }
 
 class _AppointmentsPageState extends State<AppointmentsPage> {
-  int _selectedIndex = 1;
+  final int _selectedIndex = 1;
 
   final List<Map<String, dynamic>> _appointments = [
     {
