@@ -178,7 +178,9 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   side: BorderSide(color: Colors.grey[300]!),
                                 ),
                                 child: const Text(

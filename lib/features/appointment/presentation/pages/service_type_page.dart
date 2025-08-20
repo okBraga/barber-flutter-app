@@ -71,7 +71,7 @@ class _ServiceTypeState extends State<ServiceType> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             PrimaryButton(
               onPressed: () {
                 GoRouter.of(context).push(AppRoutes.planSelection);
